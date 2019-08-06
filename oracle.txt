@@ -1,4 +1,0 @@
-Oracle Enterprise (서버용)
-Oracle client (기능이 없어)
-Oracle Express (공부용)
-
