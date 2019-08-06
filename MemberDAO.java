@@ -45,11 +45,20 @@ public class MemberDAO {
 	public int login(MemberDTO dto) {
 		int su = 0;
 		getConnection();
-		String sql = "select from member where id = ?";
+		String sql = "select id,pw from member where id = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getId());
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
 		return su;
 	}
-	public int member(MemberDTO dto) {
-		System.out.println("���� Ȯ��");
+	
+	public int member(MemberDTO dto) {//회원가입 정보
+		System.out.println("연결 확인");
 		int su = 0;
 		getConnection();
 		String sql = "insert into member values(?,?,?,?,?,?,?,?,?,?)";
@@ -82,7 +91,8 @@ public class MemberDAO {
 		}
 		return su;
 	}
-	public String searchID(MemberDTO dto) {
+	
+	public String searchID(MemberDTO dto) {//아이디 중복확인
 		String id = null;
 		getConnection();
 		String sql = "select id from member where id = ?";
