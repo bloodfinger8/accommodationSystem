@@ -8,6 +8,7 @@ import java.awt.Graphics;
 import java.awt.GridLayout;
 import java.awt.Image;
 
+import javax.swing.Icon;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -16,12 +17,13 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.BevelBorder;
+import javax.swing.border.MatteBorder;
 import javax.swing.border.SoftBevelBorder;
 
 public class RoomChoise extends JFrame
 {
 	public static final int NUMBER = 8;
-	private RoundedButton[] imgBtn;
+	private JButton[] imgBtn;
 	private JLabel[] room_NumL;
 	private JLabel[] priceL;
 	private JLabel[] reservationL;
@@ -33,7 +35,7 @@ public class RoomChoise extends JFrame
 
 	public RoomChoise()
 	{
-		imgBtn = new RoundedButton[NUMBER];
+		imgBtn = new JButton[NUMBER];
 		room_NumL = new JLabel[NUMBER];
 		priceL = new JLabel[NUMBER];
 		reservationL = new JLabel[NUMBER];
@@ -75,30 +77,25 @@ public class RoomChoise extends JFrame
 		pBtnTotal.add(pL);
 		pBtnTotal.add(pBtn2);
 		
-		backImg = new ImageIcon("C:\\java_ee\\workspace\\bitProject\\src\\img\\images.jpg");
+		backImg = new ImageIcon("C:/java_ee/workspace/bitProject/img/images.jpg");
 		
 		JPanel pTotal = new JPanel(new GridLayout(9, 1, 5, 5));
 		
-		/*pLine = new JPanel(new GridLayout(9, 1, 5, 5))
-		{
-			@Override
-			protected void paintComponent(Graphics g)
-			{
-				g.drawImage(backImg.getImage(), 0, 0, null);
-				setOpaque(false);
-				super.paintComponent(g);
-			}
-		};*/
-		
 		for(int i = 0; i < NUMBER; i++)
 		{
-			image[i] = new ImageIcon("C:\\java_ee\\workspace\\bitProject\\src\\img\\" + (i + 1));
+			image[i] = new ImageIcon("C:/java_ee/workspace/bitProject/img/" + (i + 1) + ".jpg");
 			
-			imgBtn[i] = new RoundedButton(image[i]);
-			imgBtn[i].setBackground(Color.DARK_GRAY);
+			imgBtn[i] = new JButton(image[i]);
+			imgBtn[i].setBorderPainted(false); // 외곽선 없애기
+			imgBtn[i].setContentAreaFilled(false); // 내용영역 채우기 안함
+			imgBtn[i].setFocusPainted(false); // 버튼 눌렀을때 생기는 테두리 사용안함
+			imgBtn[i].setOpaque(false); // 투명하게
+			//imgBtn[i].setBackground(getBackground().brighter());
 			
 			room_NumL[i] = new JLabel((i + 1) + "호실");
 			room_NumL[i].setFont(font);
+			//room_NumL[i].setOpaque(true);
+			//room_NumL[i].setBackground(Color.);
 			pRoom[i] = new JPanel(new FlowLayout(FlowLayout.CENTER));
 			pRoom[i].add(room_NumL[i]);
 			
@@ -118,6 +115,7 @@ public class RoomChoise extends JFrame
 			pText[i].add(pReser[i]);
 			
 			border[i] = new SoftBevelBorder(SoftBevelBorder.RAISED);
+			//border[i] = new MatteBorder(5, 10, 15, 20, backImg);
 			pLine[i] = new JPanel(new GridLayout(1, 2, 5, 5));
 			pLine[i].setBorder(border[i]);
 			
@@ -128,7 +126,7 @@ public class RoomChoise extends JFrame
 		
 		for(int i = 0; i < NUMBER; i++)
 		{
-			pTotal.add(pLine[i]);			
+			pTotal.add(pLine[i]);		
 		}
 		JScrollPane scroll = new JScrollPane(pTotal);
 		Container c = getContentPane();
