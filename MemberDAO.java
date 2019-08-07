@@ -5,6 +5,7 @@ import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 public class MemberDAO {
 	private static MemberDAO instance;
@@ -42,26 +43,43 @@ public class MemberDAO {
 			e.printStackTrace();
 		}
 	}
-	public int login(MemberDTO dto) {
-		int su = 0;
+	public MemberDTO login(MemberDTO dto) {
+		String id = null;
+		String pw = null;
 		getConnection();
 		String sql = "select id,pw from member where id = ?";
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dto.getId());
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				id = rs.getString("id");
+				pw = rs.getString("pw");
+			}
+			dto.setId(id);
+			dto.setPw(pw);
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
-		}
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
 		
-		return su;
+		return dto;
 	}
 	
 	public int member(MemberDTO dto) {//회원가입 정보
 		System.out.println("연결 확인");
 		int su = 0;
 		getConnection();
-		String sql = "insert into member values(?,?,?,?,?,?,?,?,?,?)";
+		String sql = "insert into member values(?,?,?,?,?,?,?,?)";
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dto.getId());
@@ -70,10 +88,8 @@ public class MemberDAO {
 			pstmt.setString(4, dto.getName());
 			pstmt.setString(5, dto.getBirth());
 			pstmt.setString(6, dto.getEmail());
-			pstmt.setString(7, dto.getTel1());
-			pstmt.setString(8, dto.getTel2());
-			pstmt.setString(9, dto.getTel3());
-			pstmt.setString(10, dto.getAddress1());
+			pstmt.setString(7, dto.getTel());
+			pstmt.setString(8, dto.getAddress1());
 			
 			su = pstmt.executeUpdate();
 			
@@ -118,6 +134,97 @@ public class MemberDAO {
 		}
 		return id;
 	}
-	
-	
+	public String getID(MemberDTO dto) {
+		String id = null;
+		getConnection();
+		String sql = "select id from member where email = ? and tel = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getEmail());
+			pstmt.setString(2, dto.getTel());
+			
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				id = rs.getString("id");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+				System.out.println(id);
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+		return id;
+	}
+	public String getPW(MemberDTO dto) {
+		
+		String pw = null;
+		getConnection();
+		String sql = "select pw from member where (id = ? and email = ?) and tel = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getId());
+			pstmt.setString(2, dto.getEmail());
+			pstmt.setString(3, dto.getTel());
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				pw = rs.getString("pw");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+		return pw;
+	}
+	public ArrayList<MemberDTO> loginInfo(MemberDTO dto) {
+		ArrayList<MemberDTO> arrayList = new ArrayList<MemberDTO>();
+		getConnection();
+		String sql = "select * from member where id = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getId());
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				MemberDTO memberData = new MemberDTO();
+				memberData.setId(rs.getString("id"));
+				memberData.setPw(rs.getString("pw"));
+				memberData.setName(rs.getString("name"));
+				memberData.setBirth(rs.getString("birth"));
+				memberData.setEmail(rs.getString("email"));
+				memberData.setTel(rs.getString("tel"));
+				memberData.setAddress1(rs.getString("address1"));
+				
+				arrayList.add(memberData);
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+		return arrayList;
+	}
 }
