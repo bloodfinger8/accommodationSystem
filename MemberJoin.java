@@ -20,7 +20,7 @@ public class MemberJoin extends JFrame implements ActionListener{
 	private JPasswordField pwT,pwCheckT;
 	private JButton isSameB,emailCB;
 	private RoundedButton memberOK, memberNO;
-	
+	private String Certified;
 	public MemberJoin() {
 		
 		idL = new JLabel("아이디");
@@ -124,13 +124,27 @@ public class MemberJoin extends JFrame implements ActionListener{
 		memberNO.addActionListener(this);
 		isSameB.addActionListener(this);
 		emailCB.addActionListener(this);
+		pwT.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyReleased(KeyEvent e) {
+				String pw = new String(pwT.getPassword());
+				String pwCheck = new String(pwCheckT.getPassword());
+				
+				if(!(pwCheck.equals(pw))) {
+					isSamePwL.setVisible(true);
+					if(pw.length()==0) {
+						isSamePwL.setVisible(false);
+					}
+				}else if(pwCheck.equals(pw)){
+					isSamePwL.setVisible(false);					
+				}	
+			}
+		});
 		pwCheckT.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyReleased(KeyEvent e) {
 				String pw = new String(pwT.getPassword());
 				String pwCheck = new String(pwCheckT.getPassword());
-				System.out.println(pw);
-				System.out.println(pwCheck);
 				if(!(pwCheck.equals(pw))) {
 					isSamePwL.setVisible(true);
 					if(pwCheck.length()==0) {
@@ -138,9 +152,7 @@ public class MemberJoin extends JFrame implements ActionListener{
 					}
 				}else if(pwCheck.equals(pw)){
 					isSamePwL.setVisible(false);					
-				}
-				
-				
+				}	
 			}
 		});
 	}
@@ -148,10 +160,10 @@ public class MemberJoin extends JFrame implements ActionListener{
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		
-		while(true) {
+		
 			if(e.getSource() == memberNO) {
 				setVisible(false);
-				break;
+				//break;
 			}else if(e.getSource() == memberOK) {
 				String id = idT.getText();
 				String pw = new String(pwT.getPassword());
@@ -161,12 +173,20 @@ public class MemberJoin extends JFrame implements ActionListener{
 				String email = emailT.getText();
 				String tel = telT.getText();
 				String address1 = address1T.getText();
+				String emailC = emailCT.getText();
+				int idTeb = id.indexOf(" ");
+				int pwTeb = pw.indexOf(" ");
 				
 				if(id.length()==0||pw.length()==0||pwCheck.length()==0||name.length()==0||
-					birth.length()==0||email.length()==0||tel.length()==0||address1.length()==0) {
+					birth.length()==0||email.length()==0||tel.length()==0||address1.length()==0||emailC.length()==0) {
 					JOptionPane.showMessageDialog(this, "빈 칸을 채워주세요");
-					break;
+					//break;
 				}
+				if(Certified == null) {
+					JOptionPane.showMessageDialog(this,"이메일 인증을 해주세요");
+					return;
+				}
+				if(Certified.equals(emailCT.getText())) {
 				MemberDTO dto = new MemberDTO();
 				dto.setId(id);
 				dto.setPw(pwCheck);
@@ -178,32 +198,44 @@ public class MemberJoin extends JFrame implements ActionListener{
 				dto.setAddress1(address1);
 				
 				MemberDAO dao = new MemberDAO();
-				if(pw.equals(pwCheck)) {
-					int su = 0;
-					String searchID = dao.searchID(dto); 
-					if(!(id.equals(searchID))) {
-						su = dao.member(dto);
-						idT.setText("");
-						pwT.setText("");
-						pwCheckT.setText("");
-						nameT.setText("");
-						birthT.setText("");
-						emailT.setText("");
-						telT.setText("");
-						address1T.setText("");
-					}else if(id.equals(searchID)) {
-						JOptionPane.showMessageDialog(this,"중복된 아이디입니다. 다시 입력해주세요");
-						break;
-					}
-					if(su != 0 ) {
-						JOptionPane.showMessageDialog(this,"회원가입이 완료 되었습니다.");
-						setVisible(false);
-						break;
+				if(idTeb == -1 && pwTeb == -1) {
+				
+					if(pw.equals(pwCheck)) {
+						String searchID = dao.searchID(dto); 
+						int su = 0;
+						if(!(id.equals(searchID))) {
+							su = dao.member(dto);
+						}else if(id.equals(searchID)) {
+							JOptionPane.showMessageDialog(this,"중복된 아이디입니다. 다시 입력해주세요");
+							//break;
+						} 
+						if(su != 0) {
+							idT.setText("");
+							pwT.setText("");
+							pwCheckT.setText("");
+							nameT.setText("");
+							birthT.setText("");
+							emailT.setText("");
+							telT.setText("");
+							address1T.setText("");
+							emailCT.setText("");
+							JOptionPane.showMessageDialog(this,"회원가입이 완료 되었습니다.");
+							setVisible(false);
+							//break;	
+						}
 					}
 				}else {
-					JOptionPane.showMessageDialog(this,"패스워드가 틀렸습니다. 다시 입력해주세요");
-					break;
+					JOptionPane.showMessageDialog(this,"아이디와 패스워드는 공백 없이 입력해주세요");
 				}
+				}else if(!Certified.equals(emailCT.getText())) {
+					JOptionPane.showMessageDialog(this,"인증번호가 일치하지 않습니다.");
+					//break;
+				}
+				if(!pw.equals(pwCheck)){
+					JOptionPane.showMessageDialog(this,"패스워드가 틀렸습니다. 다시 입력해주세요");
+					//break;
+				}
+				//break;
 			}
 			
 			if(e.getSource()==isSameB) {
@@ -222,8 +254,38 @@ public class MemberJoin extends JFrame implements ActionListener{
 						JOptionPane.showMessageDialog(this, "아이디를 입력해주세요");
 					}
 				}
-				break;
+				//break;
 			}
+			if(e.getSource()==emailCB) {
+				String email = emailT.getText();
+				MemberDTO dto = new MemberDTO();
+				dto.setEmail(email);
+				MemberDAO dao = new MemberDAO();//이미 가입한 이메일인지 확인한다.
+				String searchEmail = dao.searchEmail(dto);
+				System.out.println("입력 이메일 : "+email);
+				System.out.println("전송 이메일 : "+searchEmail);
+				
+				if(searchEmail==null&&email.length()!=0){
+					
+					MemberDTO emailCheck = new MemberDTO();
+					emailCheck.setEmail(emailT.getText());
+					SendMailTest smt = new SendMailTest(emailCheck);
+					Certified = emailCheck.getCertified();
+					System.out.println(Certified+"인증버튼");
+					System.out.println(emailCheck.getCertified());
+					JOptionPane.showMessageDialog(this, "인증번호를 전송했습니다.");
+					return;
+				}else if(searchEmail.equals(email)) {
+					JOptionPane.showMessageDialog(this, "이미 가입한 이메일 입니다.");
+				}
+				if(email.length()==0) {
+					JOptionPane.showMessageDialog(this, "이메일을 입력해주세요");
+					
+				}else if(emailCT.getText().length()==0) {
+					JOptionPane.showMessageDialog(this, "이메일을 입력해주세요");
+					
+				}
+			
 		}
 	}
 	public static void main(String[] args) {

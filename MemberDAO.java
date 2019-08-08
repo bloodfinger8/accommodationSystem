@@ -227,4 +227,34 @@ public class MemberDAO {
 	}
 		return arrayList;
 	}
+	public String searchEmain(String email) {
+		return null;
+	}
+	public String searchEmail(MemberDTO dto) {
+		String email = null;
+		getConnection();
+		String sql = "select email from member where email = ?";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, dto.getEmail());
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				email = rs.getString("email");
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+	}
+		return email;
+	}
 }

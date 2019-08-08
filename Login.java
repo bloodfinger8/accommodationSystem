@@ -69,12 +69,15 @@ public class Login extends JFrame implements ActionListener{
 		memberB.addActionListener(this);
 		searchID.addActionListener(this);
 		searchPW.addActionListener(this);
+		loginT.addActionListener(this);
+		passwordT.addActionListener(this);
 	}
 	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == loginB) {
+		
+		if(e.getSource() == loginB || e.getSource() == passwordT || e.getSource() == loginT) {
 			String id = loginT.getText();
 			String pw = new String(passwordT.getPassword());
 			MemberDTO dto = new MemberDTO();
@@ -103,6 +106,7 @@ public class Login extends JFrame implements ActionListener{
 				}
 				
 				setVisible(false);
+				
 			}else {
 				JOptionPane.showMessageDialog(this, "아이디나 비밀번호가 틀렸습니다.");
 			}
@@ -148,9 +152,7 @@ public class Login extends JFrame implements ActionListener{
 			}else if(pw == null) {
 				JOptionPane.showMessageDialog(this, "정보가 일치하지 않습니다.");
 			}
-			
 		}
-		
 	}
 	
 	
