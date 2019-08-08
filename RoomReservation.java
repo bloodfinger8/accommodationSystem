@@ -5,6 +5,9 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Date;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -23,20 +26,35 @@ import javax.swing.JSpinner;
 import javax.swing.JTextField;
 import javax.swing.SpinnerDateModel;
 
+import login.Login;
 import login.MemberDTO;
 
-public class RoomReservation extends JFrame implements ActionListener{
-	private JLabel startL, endL, hotelL, reserInfoL, nameL, phoneL,people_NumL,carfulL ,visitL ,payInfoL, reserpayL,
-	salepayL,totalpayL,vatL,paywayL;
-	private JTextField nameT, phoneT,reserpayT,salepayT,totalpayT;
+public class RoomReservation extends JFrame implements ActionListener {
+	private JLabel startL, endL, hotelL, reserInfoL, nameL, phoneL, people_NumL, carfulL, visitL, payInfoL, reserpayL,
+			salepayL, totalpayL, vatL, paywayL, s_yearL, s_monthL, s_dayL, e_yearL, e_monthL, e_dayL;
+	private JTextField nameT, phoneT, reserpayT, salepayT, totalpayT;
 	private JRadioButton runR, carR;
+	private JComboBox<String> s_yearCB, s_monthCB, s_dayCB, e_yearCB, e_monthCB, e_dayCB;
 	private JComboBox<String> paywayCB;
 	private RoundedButton payB, cancelB;
-	private JSpinner adultS, childS,timeSpinner,timeSpinner2;
-	private SpinnerDateModel dateModel;
+	private JSpinner adultS, childS;
 	private ArrayList<MemberDTO> mdto;
-	
-	public RoomReservation(ArrayList<MemberDTO> arrayList) {
+	private String loginId;
+
+	private ArrayList<String> syeararray;
+	private ArrayList<String> smontharray;
+	private ArrayList<String> sdayarray;
+	private ArrayList<String> eyeararray;
+	private ArrayList<String> emontharray;
+	private ArrayList<String> edayarray;
+	private String[] sdayStr;
+	private String[] smonthStr;
+	private String[] syearStr;
+	private String[] edayStr;
+	private String[] emonthStr;
+	private String[] eyearStr;
+
+	public RoomReservation() {
 		startL = new JLabel("예약날자");
 		endL = new JLabel("퇴실날자");
 		hotelL = new JLabel("비트 호텔");
@@ -52,64 +70,97 @@ public class RoomReservation extends JFrame implements ActionListener{
 		vatL = new JLabel("(vat)포함");
 		salepayL = new JLabel("할인금액");
 		paywayL = new JLabel("결제수단");
+		s_yearL = new JLabel("년");
+		s_monthL = new JLabel("월");
+		s_dayL = new JLabel("일");
+		e_yearL = new JLabel("년");
+		e_monthL = new JLabel("월");
+		e_dayL = new JLabel("일");
 
 		nameT = new JTextField();
 		phoneT = new JTextField();
-		reserpayT= new JTextField();
-		salepayT= new JTextField();
-		totalpayT= new JTextField();
+		reserpayT = new JTextField();
+		salepayT = new JTextField();
+		totalpayT = new JTextField();
 
 		adultS = new JSpinner();
 		childS = new JSpinner();
 		runR = new JRadioButton("도보");
 		carR = new JRadioButton("차량");
-		ButtonGroup  group = new ButtonGroup();
+		ButtonGroup group = new ButtonGroup();
 
 		payB = new RoundedButton("결제");
 		cancelB = new RoundedButton("취소");
 		payB.setBackground(Color.PINK);
 		cancelB.setBackground(Color.PINK);
+
+		// ------------------------------------------------------
+		yearmonthday();
+		eyearmonthday();
+		// -------------------------------------------------------
 		paywayCB = new JComboBox<String>();
+		s_yearCB = new JComboBox<String>(syeararray.toArray(new String[syeararray.size()]));
+		s_monthCB = new JComboBox<String>(smontharray.toArray(new String[smontharray.size()]));
+		s_dayCB = new JComboBox<String>(sdayarray.toArray(new String[sdayarray.size()]));
+		e_yearCB = new JComboBox<String>(eyeararray.toArray(new String[eyeararray.size()]));
+		e_monthCB = new JComboBox<String>(emontharray.toArray(new String[emontharray.size()]));
+		e_dayCB = new JComboBox<String>(edayarray.toArray(new String[edayarray.size()]));
 		
-		timeSpinner = new JSpinner( new SpinnerDateModel() );
-		timeSpinner2 = new JSpinner( new SpinnerDateModel() );
-		JSpinner.DateEditor timeEditor = new JSpinner.DateEditor(timeSpinner, "yyyy년 MM월 dd일");
-		JSpinner.DateEditor timeEditor2 = new JSpinner.DateEditor(timeSpinner, "yyyy년 MM월 dd일");
-		timeSpinner.setEditor(timeEditor);
-		timeSpinner2.setEditor(timeEditor2);
 		setTitle("숙박 예약");
 
-	    JPanel panel = new JPanel();
-	    panel.setPreferredSize(new Dimension(400,1000));
-	    panel.setLayout(null);
+		JPanel panel = new JPanel();
+		panel.setPreferredSize(new Dimension(400, 1000));
+		panel.setLayout(null);
 		JScrollPane scrollPane = new JScrollPane(panel);
-        scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-        scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
-        scrollPane.setBounds(0, 0, 385, 560);
-        JPanel p1 = new JPanel(null);
-        p1.setPreferredSize(new Dimension(500, 400));
-        p1.add(scrollPane);
-        
-        
-        startL.setBounds(26, 60, 73, 15);
+		scrollPane.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
+		scrollPane.setBounds(0, 0, 385, 560);
+		JPanel p1 = new JPanel(null);
+		p1.setPreferredSize(new Dimension(500, 400));
+		p1.add(scrollPane);
+		//array값을 배열로 바꿔 모델로 값을 준다 , 모델값이 동적으로 변동
+		
+		
+		startL.setBounds(26, 60, 73, 15);
 		panel.add(startL);
-        timeSpinner.setBounds(26,80,140,25);
-        panel.add(timeSpinner);
-        endL.setBounds(26, 110, 73, 15);
+		s_yearCB.setBounds(26, 80, 82, 25);
+		panel.add(s_yearCB);
+		s_yearL.setBounds(110, 80, 30, 25);
+		panel.add(s_yearL);
+		s_monthCB.setBounds(125, 80, 68, 25);
+		panel.add(s_monthCB);
+		s_monthL.setBounds(180, 80, 30, 25);
+		panel.add(s_monthL);
+		s_dayCB.setBounds(206, 80, 68, 25);
+		panel.add(s_dayCB);
+		s_dayL.setBounds(270, 80, 30, 25);
+		panel.add(s_dayL);
+		
+//		e_dayCB.setModel(new DefaultComboBoxModel(a));
+//		e_monthCB.setModel(new DefaultComboBoxModel(b));
+		endL.setBounds(26, 110, 73, 15);
 		panel.add(endL);
-        timeSpinner2.setBounds(26,130,140,25);
-        panel.add(timeSpinner2);
-        
-        hotelL.setFont(new Font("굴림", Font.BOLD, 23));
+		e_yearCB.setBounds(26, 130, 82, 25);
+		panel.add(e_yearCB);
+		e_yearL.setBounds(110, 130, 30, 25);
+		panel.add(e_yearL);
+		e_monthCB.setBounds(125, 130, 60, 25);
+		panel.add(e_monthCB);
+		e_monthL.setBounds(180, 130, 30, 25);
+		panel.add(e_monthL);
+		e_dayCB.setBounds(206, 130, 60, 25);
+		panel.add(e_dayCB);
+		e_dayL.setBounds(270, 130, 30, 25);
+		panel.add(e_dayL);
+
+		hotelL.setFont(new Font("굴림", Font.BOLD, 23));
 		hotelL.setBounds(145, 20, 112, 40);
 		panel.add(hotelL);
 
 		reserInfoL.setFont(new Font("굴림", Font.BOLD, 15));
 		reserInfoL.setBounds(26, 170, 94, 21);
 		panel.add(reserInfoL);
-		
-		
-		
+
 		nameL.setBounds(26, 206, 73, 15);
 		panel.add(nameL);
 
@@ -130,7 +181,7 @@ public class RoomReservation extends JFrame implements ActionListener{
 		JLabel lblNewLabel = new JLabel("성인");
 		lblNewLabel.setBounds(26, 350, 42, 15);
 		panel.add(lblNewLabel);
-		
+
 		adultS.setBounds(58, 347, 34, 22);
 		panel.add(adultS);
 
@@ -150,7 +201,7 @@ public class RoomReservation extends JFrame implements ActionListener{
 
 		runR.setBounds(36, 410, 63, 23);
 		panel.add(runR);
-		
+
 		carR.setBounds(110, 410, 63, 23);
 		panel.add(carR);
 		group.add(runR);
@@ -189,7 +240,7 @@ public class RoomReservation extends JFrame implements ActionListener{
 		paywayL.setBounds(26, 594, 73, 21);
 		panel.add(paywayL);
 
-		paywayCB.setModel(new DefaultComboBoxModel(new String[] {"현금결제", "간편 계좌 이체", "신용/체크카드", "토스", "네이버페이"}));
+		paywayCB.setModel(new DefaultComboBoxModel<String>(new String[] { "현금결제", "간편 계좌 이체", "신용/체크카드", "토스", "네이버페이" }));
 		paywayCB.setBounds(26, 625, 285, 21);
 		panel.add(paywayCB);
 
@@ -208,80 +259,243 @@ public class RoomReservation extends JFrame implements ActionListener{
 		separator_1.setBounds(0, 587, 372, 103);
 		panel.add(separator_1);
 
-        setContentPane(p1);
-        ArrayList<MemberDTO> mdto = arrayList;
-        
-        event();
-		setBounds(100,100,400,600);
+		setContentPane(p1);
+		// ArrayList<MemberDTO> mdto = arrayList;
+		// loginId =id1;
+		event();
+		setBounds(100, 100, 400, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
-		
+
 	}
-	
+
 	public void event() {
 		payB.addActionListener(this);
 		cancelB.addActionListener(this);
+		s_monthCB.addActionListener(this);
+		s_yearCB.addActionListener(this);
+		e_monthCB.addActionListener(this);
+		e_yearCB.addActionListener(this);
+		e_dayCB.addActionListener(this);
 	}
 	
+	public int calc(int year, int month) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, month - 1, 1);
+		int lastD = cal.getActualMaximum(Calendar.DATE);
+		return lastD;
+	}
+
+	public void yearmonthday() {
+		Calendar oCalendar = Calendar.getInstance(); // 현재 날짜/시간 등의 각종 정보 얻기
+		// 현재 날짜
+		int toyear = oCalendar.get(Calendar.YEAR); 
+		int tomonth = oCalendar.get(Calendar.MONTH) + 1;
+		int today = oCalendar.get(Calendar.DAY_OF_MONTH);
+		// 년도
+		syeararray = new ArrayList<String>();
+		smontharray = new ArrayList<String>();
+		sdayarray = new ArrayList<String>();
+		for (int i = toyear; i <= toyear + 5; i++) {
+			syeararray.add(String.valueOf(i));
+		}
+		for (int i = tomonth; i <= 12; i++) {
+			smontharray.add(String.valueOf(i));
+		}
+		for (int i = today; i <= calc(toyear, tomonth); i++) {
+			sdayarray.add(String.valueOf(i));
+		}
+		
+		smonthStr = smontharray.toArray(new String[smontharray.size()]);
+		sdayStr = sdayarray.toArray(new String[sdayarray.size()]);
+	}
+	public void eyearmonthday() {
+		Calendar oCalendar = Calendar.getInstance(); // 현재 날짜/시간 등의 각종 정보 얻기
+		// 현재 날짜
+		int toyear = oCalendar.get(Calendar.YEAR); 
+		int tomonth = oCalendar.get(Calendar.MONTH) + 1;
+		int today = oCalendar.get(Calendar.DAY_OF_MONTH);
+		// 년도
+		eyeararray = new ArrayList<String>();
+		emontharray = new ArrayList<String>();
+		edayarray = new ArrayList<String>();
+		for (int i = toyear; i <= toyear + 5; i++) {
+			eyeararray.add(String.valueOf(i));
+		}
+		for (int i = tomonth; i <= 12; i++) {
+			emontharray.add(String.valueOf(i));
+		}
+		for (int i = today; i <= calc(toyear, tomonth); i++) {
+			edayarray.add(String.valueOf(i));
+		}
+		
+		emonthStr = emontharray.toArray(new String[emontharray.size()]);
+		edayStr = edayarray.toArray(new String[edayarray.size()]);
+	}
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		if(e.getSource() == payB) {
-			String id=mdto.get(0).getId(); //로그인시
+		if (e.getSource() == s_monthCB ) {
+			Calendar oCalendar = Calendar.getInstance();
+			int toyear = oCalendar.get(Calendar.YEAR);
+			int tomonth = oCalendar.get(Calendar.MONTH) + 1;
+			String m = s_monthCB.getSelectedItem().toString();
+			String y = s_yearCB.getSelectedItem().toString();
+			sdayarray = new ArrayList<String>();
+			int last = calc(Integer.parseInt(y),Integer.parseInt(m));
+			
+			for (int i = 1; i <= last ; i++) {
+				sdayarray.add(String.valueOf(i));
+				System.out.println(String.valueOf(i));
+			}
+			sdayStr = sdayarray.toArray(new String[sdayarray.size()]);
+			if(m.equals(String.valueOf(tomonth)) && y.equals(String.valueOf(toyear))) { //현재 날짜
+				yearmonthday();
+			}
+			s_dayCB.setModel(new DefaultComboBoxModel<String>(sdayStr));
+		} else if (e.getSource() == s_yearCB) { //
+			String y = s_yearCB.getSelectedItem().toString();
+			Calendar oCalendar = Calendar.getInstance();
+			int toyear = oCalendar.get(Calendar.YEAR);
+			smontharray = new ArrayList<String>();
+
+			if (toyear != Integer.parseInt(y)) {//현재년도와 선택년도 다르면
+				for (int i = 1; i <= 12; i++) {
+					smontharray.add(String.valueOf(i));
+				}
+				smonthStr = smontharray.toArray(new String[smontharray.size()]);
+				System.out.println(smonthStr.toString());
+			}else
+				yearmonthday();
+			s_monthCB.setModel(new DefaultComboBoxModel<String>(smonthStr));
+			
+		}else if(e.getSource()==e_monthCB) {
+			Calendar oCalendar = Calendar.getInstance();
+			int toyear = oCalendar.get(Calendar.YEAR);
+			int tomonth = oCalendar.get(Calendar.MONTH) + 1;
+			String m = e_monthCB.getSelectedItem().toString();
+			String y = e_yearCB.getSelectedItem().toString();
+			edayarray = new ArrayList<String>();
+			int last = calc(Integer.parseInt(y),Integer.parseInt(m));
+			
+			for (int i = 1; i <= last ; i++) {
+				edayarray.add(String.valueOf(i));
+				System.out.println(String.valueOf(i));
+			}
+			edayStr = edayarray.toArray(new String[edayarray.size()]);
+			if(m.equals(String.valueOf(tomonth)) && y.equals(String.valueOf(toyear))) { //현재 날짜
+				eyearmonthday();
+			}
+			e_dayCB.setModel(new DefaultComboBoxModel<String>(edayStr));
+			
+		}else if(e.getSource()==e_yearCB) {
+			String y = e_yearCB.getSelectedItem().toString();
+			Calendar oCalendar = Calendar.getInstance();
+			int toyear = oCalendar.get(Calendar.YEAR);
+			emontharray = new ArrayList<String>();
+
+			if (toyear != Integer.parseInt(y)) {//현재년도와 선택년도 다르면
+				for (int i = 1; i <= 12; i++) {
+					emontharray.add(String.valueOf(i));
+				}
+				emonthStr = smontharray.toArray(new String[emontharray.size()]);
+				System.out.println(emonthStr.toString());
+			}else
+				eyearmonthday();
+			e_monthCB.setModel(new DefaultComboBoxModel<String>(emonthStr));
+			
+		
+
+		}else if(e.getSource() == e_dayCB) {
+			//일수 계산해서 총금액 산정
+			String startday = (String)s_yearCB.getSelectedItem()+"-"+ (String)s_monthCB.getSelectedItem()
+			+"-" +(String)s_dayCB.getSelectedItem();
+			String endday =(String)e_yearCB.getSelectedItem() +"-" +(String)e_monthCB.getSelectedItem()
+			+"-"+(String)e_dayCB.getSelectedItem();
+		     try{ 
+		         SimpleDateFormat format = new SimpleDateFormat("yyyy-mm-dd");
+		         java.util.Date FirstDate = format.parse(startday);
+		         java.util.Date SecondDate = format.parse(endday);
+		         long calDate = FirstDate.getTime() - SecondDate.getTime(); 
+		         
+		         long calDateDays = calDate / ( 24*60*60*1000); 
+		         calDateDays = Math.abs(calDateDays)*50000;
+		         
+		         totalpayT.setText(Long.toString(calDateDays)+"원");
+		         }
+		         catch(ParseException e1)
+		         {
+		        	 e1.printStackTrace();
+		         }
+			
+		}else if(e.getSource() == payB) {
+			String id = loginId;
+			String startday = (String)s_yearCB.getSelectedItem()+"/"+ (String)s_monthCB.getSelectedItem()
+			+"/" +(String)s_dayCB.getSelectedItem();
+			String endday =(String)e_yearCB.getSelectedItem() +"/" +(String)e_monthCB.getSelectedItem()
+			+"/"+(String)e_dayCB.getSelectedItem();
+			String name = nameT.getText();
+			String phone = phoneT.getText();
+			String roomnum ="R201"; //병주형 한테
+			int comeway=0;
+			if(runR.isSelected()) 
+				comeway = 0;
+            else if(carR.isSelected())
+            	comeway = 1;
+			Object adult =adultS.getValue();
+			Object child =childS.getValue();
+			int pay = Integer.parseInt(reserpayT.getText());
+			int salepay=Integer.parseInt(salepayT.getText());
+			int totalpay = pay;
+			String payway =(String)paywayCB.getSelectedItem();
+			
 			System.out.println(id);
-			System.out.println("gg");
-//			String startday =(String)timeSpinner.getValue();
-//			String endday =(String)timeSpinner.getValue();
-//			String name = nameT.getText();
-//			String phone = phoneT.getText();
-//			String roomnum; //병주형 한테
-//			int comeway=0;
-//			if(runR.isSelected()) 
-//				comeway = 0;
-//            else if(carR.isSelected())
-//            	comeway = 1;
-//			int pay; //병주형 한테
-//			String adult =(String)adultS.getValue();
-//			String child =(String)childS.getValue();
-//			int salepay=Integer.parseInt(salepayT.getText());
-//			int totalpay = Integer.parseInt(totalpayT.getText());
-//			String payway =(String)paywayCB.getSelectedItem();
-//			
-//			//DTO객체에 저장 
-//			ReservationDTO dto = null;
-//			dto = new ReservationDTO();
-//			
-//			dto.setId(id);
-//			dto.setStartday(startday);
-//			dto.setEndday(endday);
+			System.out.println(startday);
+			System.out.println(endday);
+			System.out.println(roomnum);
+			System.out.println(comeway);
+			System.out.println(pay);
+			System.out.println(adult);
+			System.out.println(child);
+			System.out.println(pay);
+			System.out.println(salepay);
+			System.out.println(totalpay);
+			System.out.println(payway);
+			
+			//DTO객체에 저장 
+			ReservationDTO dto = null;
+			dto = new ReservationDTO();
+			dto.setId(id);
+			dto.setStartday(startday.toString());
+			dto.setEndday(endday.toString());
 //			dto.setName(name);
 //			dto.setPhone(phone);
-//			dto.setRoomNum(roomnum);
-//			dto.setComeway(comeway);
-//			dto.setPay(pay);
-//			dto.setSalepay(salepay);
-//			dto.setTotalpay(totalpay);
-//			dto.setPayway(payway);
-//			
-//			//DB 
-//			ReservationDAO dao = ReservationDAO.getInstance();
-//			
-//			int su = dao.insertreservation(dto);
-//			
-//			//개인정보분석에 응답텍스트 출력 , 전체목록에 대표로 이름만 셋텍스트 
-//			if(su==1){
-//				JOptionPane.showMessageDialog(this, "예약이 완료 되었습니다.");
-//			}else
-//				JOptionPane.showMessageDialog(this, "예약이 실패 되었습니다.");
-//			
+			dto.setRoomNum(roomnum);
+			dto.setAdult(adult.toString());
+			dto.setChild(child.toString());
+			dto.setComeway(comeway);
+			dto.setPay(pay);
+			dto.setSalepay(salepay);
+			dto.setTotalpay(totalpay);
+			dto.setPayway(payway);
+			System.out.println(startday);
+			//DB 
+			ReservationDAO dao = ReservationDAO.getInstance();
 			
+			int su = dao.insertreservation(dto);
+			
+			//System.out.println(term);
+			//개인정보분석에 응답텍스트 출력 , 전체목록에 대표로 이름만 셋텍스트 
+			if(su==1){
+				JOptionPane.showMessageDialog(this, "예약이 완료 되었습니다.");
+			}else {
+				JOptionPane.showMessageDialog(this, "예약이 실패 되었습니다.");
+			}
 		}
 	}
-	
-	
-//	public static void main(String[] args) {
-//		new RoomReservation().event();
-//	}
 
- 
+	public static void main(String[] args) {
+		new RoomReservation();
+	}
 
 }
