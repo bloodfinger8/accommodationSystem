@@ -9,8 +9,14 @@ public class MemberDTO {
 	private String birth;
 	private String tel;
 	private String address1;
+	private String Certified;
 	
-	
+	public String getCertified() {
+		return Certified;
+	}
+	public void setCertified(String certified) {
+		Certified = certified;
+	}
 	public String getBirth() {
 		return birth;
 	}
