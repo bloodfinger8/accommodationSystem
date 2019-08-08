@@ -4,8 +4,8 @@ public class ReservationDTO {
 	private String id;
 	private String startday;
 	private String endday;
-	private String name;
-	private String phone;
+	//private String name;
+	//private String phone;
 	private String roomNum;
 	private String adult;
 	private String child;
@@ -33,12 +33,12 @@ public class ReservationDTO {
 	public void setEndday(String endday) {
 		this.endday = endday;
 	}
-	public void setName(String name) {
-		this.name = name;
-	}
-	public void setPhone(String phone) {
-		this.phone = phone;
-	}
+//	public void setName(String name) {
+//		this.name = name;
+//	}
+//	public void setPhone(String phone) {
+//		this.phone = phone;
+//	}
 	public void setRoomNum(String roomNum) {
 		this.roomNum = roomNum;
 	}
@@ -75,12 +75,12 @@ public class ReservationDTO {
 	public String getEndday() {
 		return endday;
 	}
-	public String getName() {
-		return name;
-	}
-	public String getPhone() {
-		return phone;
-	}
+//	public String getName() {
+//		return name;
+//	}
+//	public String getPhone() {
+//		return phone;
+//	}
 	public String getRoomNum() {
 		return roomNum;
 	}
