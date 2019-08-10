@@ -4,6 +4,7 @@ import java.awt.Color;
 import java.awt.Container;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.util.ArrayList;
 
 import javax.swing.DefaultListModel;
 import javax.swing.ImageIcon;
@@ -18,6 +19,8 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import login.MemberDAO;
+import login.MemberDTO;
 import reservation.ReservationDTO;
 
 public class Manager extends JFrame implements ActionListener, ListSelectionListener{
@@ -150,8 +153,15 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
          model = (DefaultListModel<String>)list.getModel();
          
          list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);   
-         String[] dao = {"dkanzhxh12", "dkanzhxh13", "dkanzhxh14"};
-
+        ArrayList<MemberDTO> ilist = new ArrayList<MemberDTO>();
+ 		MemberDTO dto = new MemberDTO();
+ 		MemberDAO dao = MemberDAO.getInstance();
+ 		String id = null;
+ 		ilist = dao.getChatId(dto);
+ 		for (MemberDTO data : ilist) {
+ 			id = data.getId();
+ 			model.addElement(id);
+ 		}
       JScrollPane scrollPane = new JScrollPane(list);
       scrollPane.setBounds(965, 42, 219, 440);
       scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -162,10 +172,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
       contentPane.add(basePanel);
 
       setVisible(true);
-       for(String data : dao)
-         {
-            model.addElement(data);
-         }
+       
          System.out.println(model.getSize());
          System.out.println(list.getSelectedIndex());
          list.addListSelectionListener(this);
