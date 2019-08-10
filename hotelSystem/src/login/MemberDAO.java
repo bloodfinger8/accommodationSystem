@@ -163,6 +163,32 @@ public class MemberDAO {
 	}
 		return id;
 	}
+	
+	public ArrayList<MemberDTO> getChatId(MemberDTO dto) {
+		ArrayList<MemberDTO> idlist = new ArrayList<MemberDTO>();
+		getConnection();
+		String sql = "select distinct id from member1";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			while(rs.next()) {
+				dto.setId(rs.getString("id"));
+				idlist.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			try {
+				if(rs != null) rs.close();
+				if(pstmt != null) pstmt.close();
+				if(conn != null) conn.close();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+		}
+		return idlist;
+	}
+	
 	public String getPW(MemberDTO dto) {
 		
 		String pw = null;
