@@ -30,6 +30,7 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
    private JLabel room1L, room2L, room3L, room4L, room5L, room6L, room7L, room8L;
    private JButton btnRoom_1 ,btnRoom_2, btnRoom_3 ,btnRoom_4, btnRoom_5 , btnRoom_6, btnRoom_7 , btnRoom_8;
    private RoomInfo room;
+   
    public static void main(String[] args) {
       new Manager().event();
    }// main
@@ -255,5 +256,6 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
     	  return;
       }
       new ManagerChatClient(csLoginId).service();
+      dispose();
    }
 }// class

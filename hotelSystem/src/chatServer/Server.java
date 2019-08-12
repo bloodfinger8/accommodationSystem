@@ -14,7 +14,7 @@ public class Server
 	{
 		try 
 		{
-			ss = new ServerSocket(9500);
+			ss = new ServerSocket(6700);
 			System.out.println("서버 준비 완료!!!");
 			
 			list = new ArrayList<Handler>();

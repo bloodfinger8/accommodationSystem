@@ -18,13 +18,21 @@ import java.net.Socket;
 import java.net.UnknownHostException;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeFormatterBuilder;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 
+import javax.swing.DefaultComboBoxModel;
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.AbstractBorder;
@@ -42,6 +50,9 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 	private JLabel[] priceL;
 	private JLabel[] reservationL;
 	private ImageIcon[] image;
+	private JComboBox<String> yearCB;
+	private JComboBox<String> monthCB;
+	private JComboBox<String> dayCB;
 	private RoundedButton memberInfo;
 	private RoundedButton chat;
 	private JLabel main;
@@ -51,6 +62,14 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 	private String loginId;
 	private String name;
 	private String tel;
+	private ArrayList<String> yearList;
+	private ArrayList<String> monthList;
+	private ArrayList<String> dayList;
+	private String[] dayStr;
+	private String[] monthStr;
+	private String[] yearStr;
+	private ChatClient cc;
+	private int temp;
 
 	public RoomChoise(String loginId, String name, String tel)
 	{
@@ -63,6 +82,12 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 		priceL = new JLabel[NUMBER];
 		reservationL = new JLabel[NUMBER];
 		image = new ImageIcon[NUMBER];
+		
+		yearmonthday();
+		
+		yearCB = new JComboBox<String>(yearList.toArray(new String[yearList.size()]));
+		monthCB = new JComboBox<String>(monthList.toArray(new String[monthList.size()]));
+		dayCB = new JComboBox<String>(dayList.toArray(new String[dayList.size()]));
 		
 		Font font = new Font("Times", Font.BOLD, 12);
 		
@@ -95,10 +120,19 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 		JPanel pBtn2 = new JPanel(new FlowLayout(FlowLayout.RIGHT));
 		pBtn2.add(chat);
 		
+		JPanel pDate = new JPanel(new FlowLayout(FlowLayout.CENTER));
+		pDate.add(yearCB);
+		pDate.add(monthCB);
+		pDate.add(dayCB);
+		
 		JPanel pBtnTotal = new JPanel(new GridLayout(1, 2, 5, 5));
 		pBtnTotal.add(pBtn1);
 		pBtnTotal.add(pL);
 		pBtnTotal.add(pBtn2);
+		
+		JPanel pBtnDate = new JPanel(new GridLayout(2, 1, 5, 5));
+		pBtnDate.add(pBtnTotal);
+		pBtnDate.add(pDate);
 		
 		JPanel pTotal = new JPanel(new GridLayout(9, 1, 5, 5));
 		
@@ -170,20 +204,14 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 					today = input2.parse(todayTime);
 					start = input2.parse(dto.getStartday());
 					end = input2.parse(dto.getEndday());
-					System.out.println(today);
-					System.out.println(start);
-					System.out.println(end);
 				} catch (ParseException e2) {
 					e2.printStackTrace();
 				}
 				int compare1 = today.compareTo(start);
 				int compare2 = today.compareTo(end);
-				System.out.println(compare1);
-				System.out.println(compare2);
 				
 				if(compare1 == 1 && compare2 == -1 || compare1 == 0 || compare2 == 0)
 				{
-					System.out.println("들어왔음");
 					imgBtn[i].setEnabled(false);
 					room_NumL[i].setEnabled(false);
 					priceL[i].setEnabled(false);
@@ -192,7 +220,7 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 				}
 			}
 		}
-		pTotal.add(pBtnTotal);
+		pTotal.add(pBtnDate);
 		
 		for(int i = 0; i < NUMBER; i++)
 		{
@@ -224,19 +252,54 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 	{
 		chat.addActionListener(this);
 		memberInfo.addActionListener(this);
+		yearCB.addActionListener(this);
+		monthCB.addActionListener(this);
+		dayCB.addActionListener(this);
 		
 		for(int i = 0; i < NUMBER; i++)
 		{
 			imgBtn[i].addActionListener(this);
 		}
 	}
+	public int calc(int year, int month)
+	{
+		Calendar cal = Calendar.getInstance();
+		cal.set(year, month - 1, 1);
+		int lastD = cal.getActualMaximum(Calendar.DATE);
+		return lastD;
+	}
+	public void yearmonthday()
+	{
+		Calendar oCalendar = Calendar.getInstance(); // 현재 날짜/시간 등의 각종 정보 얻기
+		// 현재 날짜
+		int toyear = oCalendar.get(Calendar.YEAR); 
+		int tomonth = oCalendar.get(Calendar.MONTH) + 1;
+		int today = oCalendar.get(Calendar.DAY_OF_MONTH);
+		// 년도
+		yearList = new ArrayList<String>();
+		monthList = new ArrayList<String>();
+		dayList = new ArrayList<String>();
+		for (int i = toyear; i <= toyear + 5; i++) {
+			yearList.add(String.valueOf(i));
+		}
+		for (int i = tomonth; i <= 12; i++) {
+			monthList.add(String.valueOf(i));
+		}
+		for (int i = today; i <= calc(toyear, tomonth); i++) {
+			dayList.add(String.valueOf(i));
+		}
+		
+		monthStr = monthList.toArray(new String[monthList.size()]);
+		dayStr = dayList.toArray(new String[dayList.size()]);
+	}
+	
 	public void service()
 	{
 		String serverIP = "192.168.0.61";
 		
 		try
 		{
-			socket = new Socket(serverIP, 9500);
+			socket = new Socket(serverIP, 6700);
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 		} 
@@ -262,13 +325,120 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 	{
 		if(e.getSource() == chat)
 		{
-			new ChatClient(loginId, name, tel).service();
-			dispose();
+			if(temp == 0)
+			{
+				cc = new ChatClient(loginId, name, tel);
+				cc.service();
+				dispose();
+			}
+			else
+			{
+				cc.setVisible(true);
+			}
+			temp++;
 		}
 		else if(e.getSource() == memberInfo)
 		{
 			new Information(loginId, name, tel);
 			dispose();
+		}
+		else if (e.getSource() == monthCB )
+		{
+			Calendar oCalendar = Calendar.getInstance();
+			int toyear = oCalendar.get(Calendar.YEAR);
+			int tomonth = oCalendar.get(Calendar.MONTH) + 1;
+			String m = monthCB.getSelectedItem().toString();
+			String y = yearCB.getSelectedItem().toString();
+			dayList = new ArrayList<String>();
+			int last = calc(Integer.parseInt(y),Integer.parseInt(m));
+			
+			for (int i = 1; i <= last ; i++) 
+			{
+				dayList.add(String.valueOf(i));
+				System.out.println(String.valueOf(i));
+			}
+			dayStr = dayList.toArray(new String[dayList.size()]);
+			
+			if(m.equals(String.valueOf(tomonth)) && y.equals(String.valueOf(toyear))) 
+			{ //현재 날짜
+				yearmonthday();
+			}
+			dayCB.setModel(new DefaultComboBoxModel<String>(dayStr));
+		} 
+		else if (e.getSource() == yearCB)
+		{ //
+			String y = yearCB.getSelectedItem().toString();
+			Calendar oCalendar = Calendar.getInstance();
+			int toyear = oCalendar.get(Calendar.YEAR);
+			monthList = new ArrayList<String>();
+
+			if (toyear != Integer.parseInt(y))
+			{//현재년도와 선택년도 다르면
+				for (int i = 1; i <= 12; i++) 
+				{
+					monthList.add(String.valueOf(i));
+				}
+				monthStr = monthList.toArray(new String[monthList.size()]);
+			}
+			else
+				yearmonthday();
+			monthCB.setModel(new DefaultComboBoxModel<String>(monthStr));
+		}
+		else if(e.getSource() == dayCB)
+		{
+			for(int i = 0; i < NUMBER; i++)
+			{
+				imgBtn[i].setEnabled(true);
+				room_NumL[i].setEnabled(true);
+				priceL[i].setEnabled(true);
+				reservationL[i].setText("예약가능");
+				reservationL[i].setEnabled(true);	
+			}
+			int year = Integer.parseInt(yearCB.getSelectedItem().toString());
+			int month = Integer.parseInt(monthCB.getSelectedItem().toString());
+			int day = Integer.parseInt(dayCB.getSelectedItem().toString());
+			
+			ArrayList<ReservationDTO> dayList = new ArrayList<ReservationDTO>();
+			ReservationDAO dao = new ReservationDAO();
+			DateTimeFormatter todayFormat = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss.s");
+			LocalDateTime date = LocalDateTime.of(year, month, day, 00, 00, 00);
+			
+			String todayTime = todayFormat.format(date);
+			
+			for(int i = 0; i < NUMBER; i++)
+			{
+				dayList = dao.daycheak(room_NumL[i].getText());
+				
+				for(ReservationDTO dto : dayList)
+				{
+					SimpleDateFormat input2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.s");
+					
+					Date today = null;
+					Date start = null;
+					Date end = null;
+					
+					try {
+						today = input2.parse(todayTime);
+						start = input2.parse(dto.getStartday());
+						end = input2.parse(dto.getEndday());
+					} 
+					catch (ParseException e2)
+					{
+						e2.printStackTrace();
+					}
+					int compare1 = today.compareTo(start);
+					int compare2 = today.compareTo(end);
+					
+					if(compare1 == 1 && compare2 == -1 || compare1 == 0)
+					{
+						imgBtn[i].setEnabled(false);
+						room_NumL[i].setEnabled(false);
+						priceL[i].setEnabled(false);
+						reservationL[i].setText("예약완료");
+						reservationL[i].setEnabled(false);		
+					}
+				}
+			}
 		}
 		
 		String room = null;
@@ -277,12 +447,11 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 			if(e.getSource() == imgBtn[i])
 			{
 				room = room_NumL[i].getText();
-				System.out.println(room);
 				
 				pw.println(room);
 				pw.flush();
 				
-				new RoomReservation(loginId, name, tel, room, priceL[i].getText());
+				new RoomReservation(loginId, name, tel, room, priceL[i].getText(), yearCB.getSelectedItem().toString(), monthCB.getSelectedItem().toString(), dayCB.getSelectedItem().toString());
 				dispose();
 			}
 		}
@@ -297,7 +466,7 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 			try 
 			{
 				room = br.readLine();
-				System.out.println(room);
+
 				if(room == null || room.toLowerCase().equals("exit"))
 				{
 					br.close();
@@ -305,6 +474,7 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 					socket.close();
 					
 					System.exit(0);
+					break;
 				}
 				
 				for(int i = 0; i < NUMBER; i++)

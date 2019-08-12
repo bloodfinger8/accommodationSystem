@@ -20,6 +20,8 @@ import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import javax.swing.ScrollPaneConstants;
 
+import manager.Manager;
+
 public class ManagerChatClient extends JFrame implements ActionListener, Runnable
 {
 	private static final long serialVersionUID = 1L;
@@ -69,6 +71,8 @@ public class ManagerChatClient extends JFrame implements ActionListener, Runnabl
 				
 				dto.setChat(Chat.EXIT);
 				dto.setInfo(Info.MANAGER);
+				dto.setLoginId("Manager" + csLoginId);
+				dto.setCsLoginId(csLoginId);
 				
 				try 
 				{
@@ -89,7 +93,7 @@ public class ManagerChatClient extends JFrame implements ActionListener, Runnabl
 		
 		try
 		{
-			socket = new Socket(serverIP, 9200);
+			socket = new Socket(serverIP, 6800);
 			
 			oos = new ObjectOutputStream(socket.getOutputStream());
 			ois = new ObjectInputStream(socket.getInputStream());
@@ -156,7 +160,8 @@ public class ManagerChatClient extends JFrame implements ActionListener, Runnabl
 				}
 				else if(dto.getInfo() == Info.MANAGER)
 				{
-					if(dto.getLoginId().equals("Manager" + dto.getCsLoginId()))
+					System.out.println(dto.getInfo() + "\n" + dto.getCsLoginId() + "\n" + dto.getLoginId());
+					if(dto.getCsLoginId().equals(csLoginId))
 					{
 						if(dto.getChat() == Chat.EXIT)
 						{
@@ -164,7 +169,9 @@ public class ManagerChatClient extends JFrame implements ActionListener, Runnabl
 							oos.close();
 							socket.close();
 							
-							dispose();
+							new Manager().event();
+							this.setVisible(false);
+							//dispose();
 							break;
 							//System.exit(0);
 						}
