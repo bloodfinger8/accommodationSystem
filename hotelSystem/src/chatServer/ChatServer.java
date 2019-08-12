@@ -14,7 +14,7 @@ public class ChatServer
 	{
 		try
 		{
-			ss = new ServerSocket(11000);
+			ss = new ServerSocket(9200);
 			System.out.println("채팅 서버 준비 완료!!!");
 			
 			list = new ArrayList<ChatHandler>();

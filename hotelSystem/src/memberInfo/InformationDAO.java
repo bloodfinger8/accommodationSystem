@@ -54,7 +54,7 @@ public class InformationDAO {
 		ReservationDTO rdto = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, "didwodn");
+			pstmt.setString(1, loginId);
 			rs = pstmt.executeQuery();
 			while (rs.next()) {
 				rdto = new ReservationDTO();
@@ -91,7 +91,7 @@ public class InformationDAO {
 		MemberDTO dto = null;
 		try {
 			pstmt = conn.prepareStatement(sql);
-			pstmt.setString(1, "irene");
+			pstmt.setString(1, loginId);
 			rs = pstmt.executeQuery();
 
 			while (rs.next()) {
@@ -123,10 +123,10 @@ public class InformationDAO {
 	}
 
 	// 회원정보 수정 완료하기
-	public int updateMember(MemberDTO dto) {
+	public int updateMember(MemberDTO dto, String loginId) {
 		int su = 0;
 		this.getConnection();
-		String sql = "update member set PW=?, PWCHECK=?, NAME=?, BIRTH=?, EMAIL=?, " + "TEL=?, ADDRESS1=?";
+		String sql = "update member set PW=?, PWCHECK=?, NAME=?, BIRTH=?, EMAIL=?, " + "TEL=?, ADDRESS1=? where ID = ?";
 
 		try {
 			pstmt = conn.prepareStatement(sql);
@@ -137,6 +137,7 @@ public class InformationDAO {
 			pstmt.setString(5, dto.getEmail());
 			pstmt.setString(6, dto.getTel());
 			pstmt.setString(7, dto.getAddress1());
+			pstmt.setString(8, loginId);
 
 			su = pstmt.executeUpdate();// 실행
 		} catch (SQLException e) {

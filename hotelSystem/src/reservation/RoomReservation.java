@@ -52,8 +52,19 @@ public class RoomReservation extends JFrame implements ActionListener {
 	private String[] edayStr;
 	private String[] emonthStr;
 	private String[] eyearStr;
+	
+	private String id1;
+	private String name;
+	private String tel;
+	private String roomNum;
+	private String price;
 
-	public RoomReservation(String id1, String name, String tel) {
+	public RoomReservation(String id1, String name, String tel, String roomNum, String price) {
+		this.id1 = id1;
+		this.name = name;
+		this.tel = tel;
+		this.roomNum = roomNum;
+		this.price = price;
 		startL = new JLabel("예약날자");
 		endL = new JLabel("퇴실날자");
 		hotelL = new JLabel("비트 호텔");
@@ -78,9 +89,9 @@ public class RoomReservation extends JFrame implements ActionListener {
 
 		nameT = new JTextField();
 		telT = new JTextField();
-		reserpayT = new JTextField();
-		salepayT = new JTextField();
-		totalpayT = new JTextField();
+		reserpayT = new JTextField("0");
+		salepayT = new JTextField("0");
+		totalpayT = new JTextField("0");
 
 		adultS = new JSpinner();
 		childS = new JSpinner();
@@ -222,7 +233,8 @@ public class RoomReservation extends JFrame implements ActionListener {
 		reserpayT.setBounds(210, 475, 116, 21);
 		panel.add(reserpayT);
 		reserpayT.setColumns(10);
-		//reserpayT.setEditable(false);
+		reserpayT.setText(price);
+		reserpayT.setEditable(false);
 
 		salepayL.setBounds(26, 506, 57, 15);
 		panel.add(salepayL);
@@ -230,7 +242,7 @@ public class RoomReservation extends JFrame implements ActionListener {
 		salepayT.setBounds(210, 503, 116, 21);
 		panel.add(salepayT);
 		salepayT.setColumns(10);
-		//salepayT.setEditable(false);
+		salepayT.setEditable(false);
 
 		totalpayL.setBounds(26, 534, 73, 15);
 		panel.add(totalpayL);
@@ -274,7 +286,6 @@ public class RoomReservation extends JFrame implements ActionListener {
 		setBounds(100, 100, 400, 600);
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setVisible(true);
-
 	}
 
 	public void event() {
@@ -440,7 +451,7 @@ public class RoomReservation extends JFrame implements ActionListener {
 			ArrayList<ReservationDTO> list = new ArrayList<ReservationDTO>();
 			ReservationDTO dto = null;
 			dto = new ReservationDTO();
-			dto.setRoomNum("R201"); //병주형한테 방정보를 받아 DB에 넣는다----------------------------------------
+			dto.setRoomNum(roomNum); //병주형한테 방정보를 받아 DB에 넣는다----------------------------------------
 			int sw = 0;
 			ReservationDAO dao = ReservationDAO.getInstance();
 			list = dao.daycheak(dto);
@@ -488,7 +499,7 @@ public class RoomReservation extends JFrame implements ActionListener {
 		         long calDate = FirstDate.getTime() - SecondDate.getTime(); 
 		         
 		         long calDateDays = calDate / ( 24*60*60*1000); 
-		         calDateDays = Math.abs(calDateDays)*50000;
+		         calDateDays = Math.abs(calDateDays)*Integer.parseInt(price); 
 		         
 		         totalpayT.setText(Long.toString(calDateDays)+"원");
 		         }
@@ -503,9 +514,9 @@ public class RoomReservation extends JFrame implements ActionListener {
 			+"/" +(String)s_dayCB.getSelectedItem();
 			String endday =(String)e_yearCB.getSelectedItem() +"/" +(String)e_monthCB.getSelectedItem()
 			+"/"+(String)e_dayCB.getSelectedItem();
+			
 			String name = nameT.getText();
 			String phone = telT.getText();
-			String roomnum ="R201"; //병주형 한테
 			int comeway=0;
 			if(runR.isSelected()) 
 				comeway = 0;
@@ -521,7 +532,7 @@ public class RoomReservation extends JFrame implements ActionListener {
 			System.out.println(id);
 			System.out.println(startday);
 			System.out.println(endday);
-			System.out.println(roomnum);
+			System.out.println(roomNum);
 			System.out.println(comeway);
 			System.out.println(pay);
 			System.out.println(adult);
@@ -539,7 +550,7 @@ public class RoomReservation extends JFrame implements ActionListener {
 			dto.setEndday(endday.toString());
 //			dto.setName(name);
 //			dto.setPhone(phone);
-			dto.setRoomNum(roomnum);
+			dto.setRoomNum(roomNum);
 			dto.setAdult(adult.toString());
 			dto.setChild(child.toString());
 			dto.setComeway(comeway);
@@ -560,6 +571,11 @@ public class RoomReservation extends JFrame implements ActionListener {
 			}else {
 				JOptionPane.showMessageDialog(this, "예약이 실패 되었습니다.");
 			}
+		}
+		else if(e.getSource() == cancelB)
+		{
+			new RoomChoise(loginId, name, tel);
+			dispose();
 		}
 	}
 
