@@ -40,6 +40,8 @@ public class Handler extends Thread
 					br.close();
 					pw.close();
 					socket.close();
+					
+					break;
 				}
 				else
 				{

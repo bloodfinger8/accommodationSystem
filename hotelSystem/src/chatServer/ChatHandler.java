@@ -55,6 +55,8 @@ public class ChatHandler extends Thread
 					ois.close();
 					oos.close();
 					socket.close();
+					
+					break;
 				}
 			} 
 			catch (ClassNotFoundException e) 

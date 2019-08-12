@@ -58,13 +58,20 @@ public class RoomReservation extends JFrame implements ActionListener {
 	private String tel;
 	private String roomNum;
 	private String price;
+	private String year;
+	private String month;
+	private String day;
 
-	public RoomReservation(String id1, String name, String tel, String roomNum, String price) {
+	public RoomReservation(String id1, String name, String tel, String roomNum, String price, String year, String month, String day) {
 		this.id1 = id1;
 		this.name = name;
 		this.tel = tel;
 		this.roomNum = roomNum;
 		this.price = price;
+		this.year = year;
+		this.month = month;
+		this.day = day;
+		
 		startL = new JLabel("예약날자");
 		endL = new JLabel("퇴실날자");
 		hotelL = new JLabel("비트 호텔");
@@ -307,11 +314,14 @@ public class RoomReservation extends JFrame implements ActionListener {
 	}
 
 	public void yearmonthday() {
-		Calendar oCalendar = Calendar.getInstance(); // 현재 날짜/시간 등의 각종 정보 얻기
+		//Calendar oCalendar = Calendar.getInstance(); // 현재 날짜/시간 등의 각종 정보 얻기
 		// 현재 날짜
-		int toyear = oCalendar.get(Calendar.YEAR); 
-		int tomonth = oCalendar.get(Calendar.MONTH) + 1;
-		int today = oCalendar.get(Calendar.DAY_OF_MONTH);
+		//int toyear = oCalendar.get(Calendar.YEAR); 
+		//int tomonth = oCalendar.get(Calendar.MONTH) + 1;
+		//int today = oCalendar.get(Calendar.DAY_OF_MONTH);
+		int toyear = Integer.parseInt(year);
+		int tomonth = Integer.parseInt(month);
+		int today = Integer.parseInt(day);
 		// 년도
 		syeararray = new ArrayList<String>();
 		smontharray = new ArrayList<String>();
@@ -330,11 +340,14 @@ public class RoomReservation extends JFrame implements ActionListener {
 		sdayStr = sdayarray.toArray(new String[sdayarray.size()]);
 	}
 	public void eyearmonthday() {
-		Calendar oCalendar = Calendar.getInstance(); // 현재 날짜/시간 등의 각종 정보 얻기
+		//Calendar oCalendar = Calendar.getInstance(); // 현재 날짜/시간 등의 각종 정보 얻기
 		// 현재 날짜
-		int toyear = oCalendar.get(Calendar.YEAR); 
-		int tomonth = oCalendar.get(Calendar.MONTH) + 1;
-		int today = oCalendar.get(Calendar.DAY_OF_MONTH);
+		//int toyear = oCalendar.get(Calendar.YEAR); 
+		//int tomonth = oCalendar.get(Calendar.MONTH) + 1;
+		//int today = oCalendar.get(Calendar.DAY_OF_MONTH);
+		int toyear = Integer.parseInt(year);
+		int tomonth = Integer.parseInt(month);
+		int today = Integer.parseInt(day);
 		// 년도
 		eyeararray = new ArrayList<String>();
 		emontharray = new ArrayList<String>();
@@ -465,25 +478,13 @@ public class RoomReservation extends JFrame implements ActionListener {
 					Date dbstart = input2.parse(sd);
 					Date dbend = input2.parse(ed);
 					
-					
 					int ck = end.compareTo(dbstart);
 					int ck3 =dbend.compareTo(end);
 					int ck2 = start.compareTo(dbstart);
 					int ck4 = dbend.compareTo(start);
-					int ck5 = start.compareTo(dbstart);
-					int ck6 = dbend.compareTo(end);
-					int ck7 = dbstart.compareTo(start);
-					int ck8 = end.compareTo(dbend);
-					if(ck== 1 && ck3 ==1) {
-						System.out.println("선택된 체크아웃이 예약사이에 걸린다");
-					}else if(ck2 == 1 && ck4 == 1) {
-						System.out.println("선택된 체크인이 예약사이에 걸린다");
-					}else if(ck5 == 1 && ck6 ==1) {
-						System.out.println("선택된일자 모두가 예약사이에 걸린다");
-					}else if(ck7 ==1 && ck8 ==1) {
-						System.out.println("선택된 일자가 포함");
-					}else if(ck2 ==0 && ck6==0) {
-						System.out.println("예약일자가 딱 겹친다");
+
+					if((ck== 1 && ck3 ==1) || (ck2 == 1 && ck4 == 1) || ck2 == 0 || ck3 == 0) {
+						JOptionPane.showMessageDialog(this, "이미 예약된 날짜입니다.");
 					}
 					
 				} catch (ParseException e1) { 
@@ -568,6 +569,8 @@ public class RoomReservation extends JFrame implements ActionListener {
 			//개인정보분석에 응답텍스트 출력 , 전체목록에 대표로 이름만 셋텍스트 
 			if(su==1){
 				JOptionPane.showMessageDialog(this, "예약이 완료 되었습니다.");
+				new RoomChoise(loginId, this.name, tel);
+				dispose();
 			}else {
 				JOptionPane.showMessageDialog(this, "예약이 실패 되었습니다.");
 			}
