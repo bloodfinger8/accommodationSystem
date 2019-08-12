@@ -16,6 +16,10 @@ import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
 import java.net.Socket;
 import java.net.UnknownHostException;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 
 import javax.swing.ImageIcon;
 import javax.swing.JButton;
@@ -25,6 +29,9 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.border.AbstractBorder;
 import javax.swing.border.SoftBevelBorder;
+
+import chatServer.ChatClient;
+import memberInfo.Information;
 
 public class RoomChoise extends JFrame implements ActionListener, Runnable
 {
@@ -42,10 +49,14 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 	private BufferedReader br;
 	private PrintWriter pw;
 	private String loginId;
+	private String name;
+	private String tel;
 
-	public RoomChoise(String loginId)
+	public RoomChoise(String loginId, String name, String tel)
 	{
 		this.loginId = loginId;
+		this.name = name;
+		this.tel = tel;
 		
 		imgBtn = new JButton[NUMBER];
 		room_NumL = new JLabel[NUMBER];
@@ -91,14 +102,14 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 		
 		JPanel pTotal = new JPanel(new GridLayout(9, 1, 5, 5));
 		
-		priceL[0] = new JLabel("40000원");
-		priceL[1] = new JLabel("40000원");
-		priceL[2] = new JLabel("50000원");
-		priceL[3] = new JLabel("50000원");
-		priceL[4] = new JLabel("60000원");
-		priceL[5] = new JLabel("60000원");
-		priceL[6] = new JLabel("70000원");
-		priceL[7] = new JLabel("70000원");
+		priceL[0] = new JLabel("40000");
+		priceL[1] = new JLabel("40000");
+		priceL[2] = new JLabel("50000");
+		priceL[3] = new JLabel("50000");
+		priceL[4] = new JLabel("60000");
+		priceL[5] = new JLabel("60000");
+		priceL[6] = new JLabel("70000");
+		priceL[7] = new JLabel("70000");
 		
 		for(int i = 0; i < NUMBER; i++)
 		{
@@ -136,6 +147,51 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 			pLine[i].add(imgBtn[i]);
 			pLine[i].add(pText[i]);
 		}
+		ArrayList<ReservationDTO> dayList = new ArrayList<ReservationDTO>();
+		ReservationDAO dao = new ReservationDAO();
+		SimpleDateFormat todayFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.s");
+		Date time = new Date();
+		
+		String todayTime = todayFormat.format(time);
+		
+		for(int i = 0; i < NUMBER; i++)
+		{
+			dayList = dao.daycheak(room_NumL[i].getText());
+			
+			for(ReservationDTO dto : dayList)
+			{
+				SimpleDateFormat input2 = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.s");
+				
+				Date today = null;
+				Date start = null;
+				Date end = null;
+				
+				try {
+					today = input2.parse(todayTime);
+					start = input2.parse(dto.getStartday());
+					end = input2.parse(dto.getEndday());
+					System.out.println(today);
+					System.out.println(start);
+					System.out.println(end);
+				} catch (ParseException e2) {
+					e2.printStackTrace();
+				}
+				int compare1 = today.compareTo(start);
+				int compare2 = today.compareTo(end);
+				System.out.println(compare1);
+				System.out.println(compare2);
+				
+				if(compare1 == 1 && compare2 == -1 || compare1 == 0 || compare2 == 0)
+				{
+					System.out.println("들어왔음");
+					imgBtn[i].setEnabled(false);
+					room_NumL[i].setEnabled(false);
+					priceL[i].setEnabled(false);
+					reservationL[i].setText("예약완료");
+					reservationL[i].setEnabled(false);		
+				}
+			}
+		}
 		pTotal.add(pBtnTotal);
 		
 		for(int i = 0; i < NUMBER; i++)
@@ -146,7 +202,7 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 		Container c = getContentPane();
 		
 		c.add(scroll);
-		
+
 		setBounds(100, 80, 400, 600);
 		setVisible(true);
 		
@@ -167,6 +223,7 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 	public void event()
 	{
 		chat.addActionListener(this);
+		memberInfo.addActionListener(this);
 		
 		for(int i = 0; i < NUMBER; i++)
 		{
@@ -179,7 +236,7 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 		
 		try
 		{
-			socket = new Socket(serverIP, 9100);
+			socket = new Socket(serverIP, 9500);
 			br = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			pw = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
 		} 
@@ -205,7 +262,13 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 	{
 		if(e.getSource() == chat)
 		{
-			new ChatClient(loginId).service();
+			new ChatClient(loginId, name, tel).service();
+			dispose();
+		}
+		else if(e.getSource() == memberInfo)
+		{
+			new Information(loginId, name, tel);
+			dispose();
 		}
 		
 		String room = null;
@@ -218,6 +281,9 @@ public class RoomChoise extends JFrame implements ActionListener, Runnable
 				
 				pw.println(room);
 				pw.flush();
+				
+				new RoomReservation(loginId, name, tel, room, priceL[i].getText());
+				dispose();
 			}
 		}
 	}

@@ -19,12 +19,13 @@ import javax.swing.border.EmptyBorder;
 import javax.swing.event.ListSelectionEvent;
 import javax.swing.event.ListSelectionListener;
 
+import chatServer.ManagerChatClient;
 import login.MemberDAO;
 import login.MemberDTO;
 import reservation.ReservationDTO;
 
 public class Manager extends JFrame implements ActionListener, ListSelectionListener{
-   private JList list;
+   private JList<String> list;
    private DefaultListModel<String> model;
    private JLabel room1L, room2L, room3L, room4L, room5L, room6L, room7L, room8L;
    private JButton btnRoom_1 ,btnRoom_2, btnRoom_3 ,btnRoom_4, btnRoom_5 , btnRoom_6, btnRoom_7 , btnRoom_8;
@@ -149,19 +150,20 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
 
 //----------------------------------------------------------------
       // JList
-       list = new JList<String>(new DefaultListModel<String>());
-         model = (DefaultListModel<String>)list.getModel();
+      list = new JList<String>(new DefaultListModel<String>());
+      model = (DefaultListModel<String>)list.getModel();
          
-         list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);   
-        ArrayList<MemberDTO> ilist = new ArrayList<MemberDTO>();
- 		MemberDTO dto = new MemberDTO();
- 		MemberDAO dao = MemberDAO.getInstance();
- 		String id = null;
- 		ilist = dao.getChatId(dto);
- 		for (MemberDTO data : ilist) {
- 			id = data.getId();
- 			model.addElement(id);
- 		}
+      list.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);   
+      ArrayList<MemberDTO> ilist = new ArrayList<MemberDTO>();
+      MemberDTO dto = new MemberDTO();
+      MemberDAO dao = MemberDAO.getInstance();
+      String id = null;
+      ilist = dao.getChatId(dto);
+      for (MemberDTO data : ilist) {
+    	  id = data.getId();
+    	  model.addElement(id);
+      }
+
       JScrollPane scrollPane = new JScrollPane(list);
       scrollPane.setBounds(965, 42, 219, 440);
       scrollPane.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_ALWAYS);
@@ -172,10 +174,10 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
       contentPane.add(basePanel);
 
       setVisible(true);
-       
-         System.out.println(model.getSize());
-         System.out.println(list.getSelectedIndex());
-         list.addListSelectionListener(this);
+
+      System.out.println(model.getSize());
+      System.out.println(list.getSelectedIndex());
+      list.addListSelectionListener(this);
 
       
    }// 생성자
@@ -246,6 +248,12 @@ public class Manager extends JFrame implements ActionListener, ListSelectionList
 
    @Override
    public void valueChanged(ListSelectionEvent e) {
+      String csLoginId = list.getSelectedValue();
       
+      if(list.getSelectedIndex() == -1)
+      {
+    	  return;
+      }
+      new ManagerChatClient(csLoginId).service();
    }
 }// class
