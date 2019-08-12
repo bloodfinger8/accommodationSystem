@@ -96,7 +96,7 @@ public class ChatClient extends JFrame implements ActionListener, Runnable
 		
 		try
 		{
-			socket = new Socket(serverIP, 9200);
+			socket = new Socket(serverIP, 6800);
 			
 			ois = new ObjectInputStream(socket.getInputStream());
 			oos = new ObjectOutputStream(socket.getOutputStream());
@@ -171,7 +171,8 @@ public class ChatClient extends JFrame implements ActionListener, Runnable
 							socket.close();
 							
 							new RoomChoise(loginId, name, tel);
-							dispose();
+							this.setVisible(false);
+							break;
 						}
 					}
 				}
