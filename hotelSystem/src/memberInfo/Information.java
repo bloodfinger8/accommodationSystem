@@ -21,6 +21,7 @@ import javax.swing.border.EmptyBorder;
 import login.Login;
 import login.MemberDTO;
 import reservation.ReservationDTO;
+import reservation.RoomChoise;
 
 public class Information extends JFrame implements ActionListener {
 
@@ -36,21 +37,25 @@ public class Information extends JFrame implements ActionListener {
 
 	private JButton accountCloseB, editB, confirmB, cancelB, toHomeB, reservChangeB;
 	private JLabel wonL;
-
-	private static String loginId = "irene";
+	private String loginId;
+	private String name;
+	private String tel;
+	//private static String loginId = "irene";
 
 	/**
 	 * Launch the application.
 	 */
-	public static void main(String[] args) {
-		new Information(loginId).event();
-	}// main
+	//public static void main(String[] args) {
+	//	new Information(loginId).event();
+	//}// main
 
 	/**
 	 * Create the frame.
 	 */
-	public Information(String loginId) {
+	public Information(String loginId, String name, String tel) {
 		this.loginId = loginId;
+		this.name = name;
+		this.tel = tel;
 
 		setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		setBounds(100, 100, 400, 600);
@@ -318,6 +323,8 @@ public class Information extends JFrame implements ActionListener {
 
 		ReservationDTO rdto = dao.selectReservationData(loginId);
 		getReservationData(rdto);
+		
+		event();
 
 	}// Constructor
 
@@ -397,9 +404,10 @@ public class Information extends JFrame implements ActionListener {
 				phoneT.setText("");
 				emailT.setText("");
 				addressT.setText("");
-				setVisible(false);
+				//setVisible(false);
 				// 로그인 화면으로
 				new Login();
+				dispose();
 
 			}
 		} else if (e.getSource() == editB) {// 수정 버튼
@@ -451,7 +459,7 @@ public class Information extends JFrame implements ActionListener {
 
 			// DB에 update
 			InformationDAO dao = InformationDAO.getInstance();
-			int su = dao.updateMember(dto);
+			int su = dao.updateMember(dto, loginId);
 
 			// 회원정보 수정이 완료되었습니다.
 			JOptionPane.showMessageDialog(this, "회원정보 수정이 완료되었습니다.");
@@ -475,11 +483,14 @@ public class Information extends JFrame implements ActionListener {
 			addressT.setEditable(false);
 
 		} else if (e.getSource() == toHomeB) {
-			this.setVisible(false);
+			//this.setVisible(false);
 //			new xxxxx();
+			new RoomChoise(loginId, name, tel);
+			dispose();
 		} else if (e.getSource() == reservChangeB) {
-			this.setVisible(false);
+			//this.setVisible(false);
 //			new xxxxx();
+			//new 
 		}
 
 	}// actionPerformed()

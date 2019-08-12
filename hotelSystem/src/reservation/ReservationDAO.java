@@ -13,8 +13,8 @@ public class ReservationDAO {
 	private static ReservationDAO instance;
 	private String driver = "oracle.jdbc.driver.OracleDriver";
 	private String url = "jdbc:oracle:thin:@localhost:1521:xe";
-	private String user = "system";
-	private String password = "oracle";
+	private String user = "java";
+	private String password = "dkdlxl";
 	
 	private Connection conn;
 	private PreparedStatement pstmt;
@@ -116,6 +116,27 @@ public class ReservationDAO {
 		try {
 			pstmt = conn.prepareStatement(sql);
 			pstmt.setString(1, dto.getRoomNum());
+			rs = pstmt.executeQuery();
+			
+			while(rs.next()) {
+				ReservationDTO reservationdto = new ReservationDTO();
+				reservationdto.setStartday(rs.getString("startday"));
+				reservationdto.setEndday(rs.getString("endday"));
+				daylist.add(reservationdto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		
+		return daylist;
+	}
+	public ArrayList<ReservationDTO> daycheak(String roomNum) {
+		ArrayList<ReservationDTO> daylist = new ArrayList<ReservationDTO>();
+		getConnection();
+		String sql = "select startday,endday from reservation where roomnum = ? ";
+		try {
+			pstmt = conn.prepareStatement(sql);
+			pstmt.setString(1, roomNum);
 			rs = pstmt.executeQuery();
 			
 			while(rs.next()) {
