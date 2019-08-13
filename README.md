@@ -4,7 +4,7 @@ JAVA Swing Project
 
 😀 기능 : 회원가입/로그인 , 숙박 예약 , 개인정보 확인 및 변경, 예약 변경
 
-👉로그인 UI
+<p>👉로그인 UI</p>
 <img width="399" alt="KakaoTalk_Photo_2019-08-13-17-41-24" src="https://user-images.githubusercontent.com/40788586/62928333-54dd4280-bdf3-11e9-9f7e-030308ccd270.png">
 
 👉회원가입 UI
