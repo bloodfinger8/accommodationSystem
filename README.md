@@ -21,5 +21,5 @@
 <img width="292" alt="KakaoTalk_Photo_2019-08-13-17-49-26" src="https://user-images.githubusercontent.com/40788586/62928444-835b1d80-bdf3-11e9-9b0a-75faa3527ab7.png">
 <img width="285" alt="KakaoTalk_Photo_2019-08-13-17-49-32" src="https://user-images.githubusercontent.com/40788586/62928482-9241d000-bdf3-11e9-987a-457ab7b8f184.png">
 
-<p>👉 </p>
-<img width="1200" alt="스크린샷 2019-08-14 오전 9 17 01" src="https://user-images.githubusercontent.com/40788586/62986429-89461280-be76-11e9-9cbc-d5f30ff56f4b.png">
+<p>👉매니저 UI </p>
+<img width="800" alt="스크린샷 2019-08-14 오전 9 17 01" src="https://user-images.githubusercontent.com/40788586/62986429-89461280-be76-11e9-9cbc-d5f30ff56f4b.png">
