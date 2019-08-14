@@ -1,6 +1,6 @@
 # accommodationSystem
 
-<font size ="15" color = "RED">JAVA Swing Project</font>
+<font size ="15" color = "#cc33ff"> JAVA Swing Project </font>
 
 <p> 프로젝트 기능 : 회원가입/로그인 , 숙박 예약 , 개인정보 확인 및 변경, 예약 변경 </br>
     프로젝트 기간 : 6일 </p>
