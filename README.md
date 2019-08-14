@@ -23,10 +23,10 @@
 
 <p>👉회원정보 / 예약정보 UI </p>
 <img width="299" alt="스크린샷 2019-08-14 오전 9 15 51" src="https://user-images.githubusercontent.com/40788586/63000627-941b9a00-beac-11e9-85bb-04ace271c964.png">
-<img width="400" alt="스크린샷 2019-08-14 오전 9 16 11" src="https://user-images.githubusercontent.com/40788586/63000678-b1e8ff00-beac-11e9-87ea-573e4d37dee1.png">
+<img width="299" alt="스크린샷 2019-08-14 오전 9 16 11" src="https://user-images.githubusercontent.com/40788586/63000678-b1e8ff00-beac-11e9-87ea-573e4d37dee1.png">
 
 <p>👉매니저 UI </p>
-<img width="800" alt="스크린샷 2019-08-14 오전 9 17 01" src="https://user-images.githubusercontent.com/40788586/62986429-89461280-be76-11e9-9cbc-d5f30ff56f4b.png">
+<img width="600" alt="스크린샷 2019-08-14 오전 9 17 01" src="https://user-images.githubusercontent.com/40788586/62986429-89461280-be76-11e9-9cbc-d5f30ff56f4b.png">
 
 <p>👉채팅 UI </p>
 <img width="299" alt="스크린샷 2019-08-14 오전 9 29 08" src="https://user-images.githubusercontent.com/40788586/63000688-bb726700-beac-11e9-9909-4508867dc297.png">
