@@ -11,7 +11,7 @@ JAVA Swing Mini Project
 <p>👉로그인 UI</p>
 <img width="299" alt="KakaoTalk_Photo_2019-08-13-17-41-24" src="https://user-images.githubusercontent.com/40788586/62928333-54dd4280-bdf3-11e9-9f7e-030308ccd270.png">
 
-<p>👉  UI</p>
+<p>👉회원가입 UI</p>
 <img width="298" alt="KakaoTalk_Photo_2019-08-13-17-48-49" src="https://user-images.githubusercontent.com/40788586/62928373-658db880-bdf3-11e9-8a6e-f15053d3f629.png">
 
 <p>👉객실 선택 UI</p>
