@@ -8,11 +8,11 @@ JAVA Swing Mini Project
 
 
 <p><b><h3>user 클라이언트</h3></b></p> 
-<p>👉로그인 UI</p>
+<p>👉로그인 UI
 <img width="299" alt="KakaoTalk_Photo_2019-08-13-17-41-24" src="https://user-images.githubusercontent.com/40788586/62928333-54dd4280-bdf3-11e9-9f7e-030308ccd270.png">
 
-<p>👉회원가입 UI</p>
-<img width="298" alt="KakaoTalk_Photo_2019-08-13-17-48-49" src="https://user-images.githubusercontent.com/40788586/62928373-658db880-bdf3-11e9-8a6e-f15053d3f629.png">
+
+<img width="298" alt="KakaoTalk_Photo_2019-08-13-17-48-49" src="https://user-images.githubusercontent.com/40788586/62928373-658db880-bdf3-11e9-8a6e-f15053d3f629.png"></p>
 
 <p>👉객실 선택 UI</p>
 <img width="299" alt="KakaoTalk_Photo_2019-08-13-17-49-15" src="https://user-images.githubusercontent.com/40788586/62928393-6de5f380-bdf3-11e9-864d-d67da8a10a92.png">
